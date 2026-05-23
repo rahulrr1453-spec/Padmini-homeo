@@ -1,6 +1,6 @@
 [build]
   base = "frontend"
-  command = "npm run build"
+  command = "CI=false npm run build"
   publish = "build"
 
 # If the frontend uses dynamic router (like react-router), redirects can be added here.

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Users, FileText, Calendar, TrendingUp, Clock, AlertCircle, CalendarClock, X, ChevronRight, BarChart3, Filter } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend, PieChart, Pie, Cell } from 'recharts';
+import { Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell } from 'recharts';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 

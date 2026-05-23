@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Plus, Trash2, X, Loader2, UserPlus, Stethoscope, Mail, Phone } from 'lucide-react';
+import { Trash2, X, Loader2, UserPlus, Stethoscope, Mail, Phone } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 

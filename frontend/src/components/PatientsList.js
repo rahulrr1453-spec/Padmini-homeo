@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, Plus, Edit2, Trash2, X, Save, AlertCircle, Loader2, Download, Upload } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, X, Save, Loader2, Download, Upload } from 'lucide-react';
 import { generatePDF } from '../utils/pdfExport';
 import * as XLSX from 'xlsx';
 import PatientHistory from './PatientHistory';
@@ -10,7 +10,6 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 const PatientsList = ({ currentAction, setCurrentAction, activeDoctor, doctors }) => {
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingPatient, setEditingPatient] = useState(null);
@@ -55,7 +54,7 @@ const PatientsList = ({ currentAction, setCurrentAction, activeDoctor, doctors }
         throw new Error('Failed to fetch patients');
       }
     } catch (err) {
-      setError(err.message);
+      console.error(err);
     } finally {
       setLoading(false);
     }

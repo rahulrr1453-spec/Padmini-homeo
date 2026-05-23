@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Plus, Search, FileText, Download, Trash2, X, Loader2 } from 'lucide-react';
+import { Plus, Search, Download, Trash2, X, Loader2 } from 'lucide-react';
 import { generatePDF } from '../utils/pdfExport';
 import PatientSelect from './PatientSelect';
 

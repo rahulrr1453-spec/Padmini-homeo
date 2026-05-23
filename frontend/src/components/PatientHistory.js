@@ -21,6 +21,7 @@ const PatientHistory = ({ patient, onClose, activeDoctor, doctors }) => {
 
   useEffect(() => {
     fetchHistoryData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patient.id]);
 
   useEffect(() => {
