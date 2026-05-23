@@ -1,0 +1,12 @@
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = "build"
+
+# If the frontend uses dynamic router (like react-router), redirects can be added here.
+# Since current frontend is single-page state based, no custom redirects are strictly necessary.
+# But we can add it to be safe for any refresh on deep routes.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
