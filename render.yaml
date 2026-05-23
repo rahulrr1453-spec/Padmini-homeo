@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: padmini-homeo-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: DATABASE_URL
+        value: postgresql://neondb_owner:npg_zNsL4tKG8yqJ@ep-ancient-water-a8n3kbbm-pooler.eastus2.azure.neon.tech/neondb?sslmode=require&channel_binding=require
