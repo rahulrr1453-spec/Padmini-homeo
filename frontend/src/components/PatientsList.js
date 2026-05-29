@@ -7,7 +7,7 @@ import PatientHistory from './PatientHistory';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 
-const PatientsList = ({ currentAction, setCurrentAction, activeDoctor, doctors }) => {
+const PatientsList = ({ currentAction, setCurrentAction, activeDoctor, doctors, userRole }) => {
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -272,8 +272,14 @@ const PatientsList = ({ currentAction, setCurrentAction, activeDoctor, doctors }
           let age = parseInt(ageRaw);
           if (isNaN(age)) age = 0;
 
-          const mobileRaw = getVal('Phone Number', 'Phone', 'Mobile');
-          const mobileStr = String(mobileRaw).trim() || 'N/A'; // N/A prevents backend validation failure
+          const mobileRaw = getVal('Mobile Number', 'MobileNo', 'Mobile No', 'Phone Number', 'Phone', 'Mobile', 'Contact', 'Contact Number', 'Ph No', 'Ph. No', 'Ph');
+          let mobileStr = String(mobileRaw).trim();
+          if (mobileStr.endsWith('.0')) {
+            mobileStr = mobileStr.slice(0, -2);
+          }
+          if (!mobileStr || mobileStr === 'undefined' || mobileStr === 'null') {
+            mobileStr = 'N/A';
+          }
 
           const placeRaw = getVal('Long Place', 'Place Short', 'Place', 'Address');
           const occRaw = getVal('Occupation');
@@ -346,6 +352,25 @@ const PatientsList = ({ currentAction, setCurrentAction, activeDoctor, doctors }
     generatePDF('Patient Directory', columns, data, 'Patients_List');
   };
 
+  const handleDownloadExcel = () => {
+    const dataToExport = filteredPatients.map(p => ({
+      'Patient ID': p.id,
+      'Patient Name': p.name,
+      'Age': p.age,
+      'Sex': p.sex,
+      'Mobile': p.mobile,
+      'Place': p.place || '',
+      'Occupation': p.occupation || '',
+      'Marital Status': p.marital_status || '',
+      'Registration Date': new Date(p.date).toLocaleDateString()
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Patients');
+    XLSX.writeFile(workbook, `Patients_List_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
   const handleDownloadSinglePDF = (p) => {
     const columns = ['Field', 'Details'];
     const data = [
@@ -379,25 +404,33 @@ const PatientsList = ({ currentAction, setCurrentAction, activeDoctor, doctors }
             <Trash2 className="w-5 h-5" />
             <span>Delete All</span>
           </button>
-          <input 
-            type="file" 
-            ref={fileInputRef} 
-            onChange={handleFileUpload} 
-            accept=".xlsx, .xls" 
-            className="hidden" 
-          />
-          <button 
-            onClick={() => fileInputRef.current?.click()} 
-            className="btn-secondary" 
-            disabled={isUploading}
-          >
-            {isUploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
-            <span>{isUploading ? 'Uploading...' : 'Upload Excel'}</span>
-          </button>
-          <button onClick={handleDownloadPDF} className="btn-secondary">
-            <Download className="w-5 h-5" />
-            <span>Export PDF</span>
-          </button>
+          {userRole === 'admin' && (
+            <>
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleFileUpload} 
+                accept=".xlsx, .xls" 
+                className="hidden" 
+              />
+              <button 
+                onClick={() => fileInputRef.current?.click()} 
+                className="btn-secondary" 
+                disabled={isUploading}
+              >
+                {isUploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
+                <span>{isUploading ? 'Uploading...' : 'Upload Excel'}</span>
+              </button>
+              <button onClick={handleDownloadPDF} className="btn-secondary">
+                <Download className="w-5 h-5" />
+                <span>Export PDF</span>
+              </button>
+              <button onClick={handleDownloadExcel} className="btn-secondary">
+                <Download className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                <span>Export Excel</span>
+              </button>
+            </>
+          )}
           <button onClick={openAddModal} className="btn-primary">
             <Plus className="w-5 h-5" />
             <span>New Patient</span>
@@ -470,9 +503,11 @@ const PatientsList = ({ currentAction, setCurrentAction, activeDoctor, doctors }
                     </td>
                     <td className="p-4">
                       <div className="flex items-center justify-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => handleDownloadSinglePDF(patient)} className="p-2 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg transition-colors" title="Download Details">
-                          <Download className="w-4 h-4" />
-                        </button>
+                        {userRole === 'admin' && (
+                          <button onClick={() => handleDownloadSinglePDF(patient)} className="p-2 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg transition-colors" title="Download Details">
+                            <Download className="w-4 h-4" />
+                          </button>
+                        )}
                         <button onClick={() => openEditModal(patient)} className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors" title="Edit Patient">
                           <Edit2 className="w-4 h-4" />
                         </button>
